@@ -1,0 +1,35 @@
+---
+# set false if you want to use self-signed certificate
+https_verify_cert: true
+auth_service:
+  - name: Service 1
+    url: https://127.0.0.1:11245
+    # api key for authenticating plugin in service. The same api key must be
+    # set in authentication service config
+    api_key: 123456789
+    # monitoring settings for this service
+    monitoring:
+      # settings must be equal in corresponding config part of the authentication service
+      path:  /monitor/12345
+      api_key: 123456789
+  # configure second authentication service if required. If not required, remove this section.
+  - name: Service 2
+    url: http://127.0.0.1:11246
+    api_key: 123456789
+    monitoring:
+      path:  /monitor/12345
+      api_key: 123456789
+log:
+  file: /var/log/plugin.log
+  level: error
+# timings for authentication service
+auth:
+  connect_timeout_sec: 5
+  # must be not less then response timeout for MFA provider
+  response_timeout_sec: 20
+# if authentication services more than 1, than you can enable monitoring of services from plugin
+# if any of service is unavailable, than first available service is used
+monitoring:
+  enable: false
+  check_interval_sec: 5
+

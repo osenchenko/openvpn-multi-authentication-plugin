@@ -1,0 +1,89 @@
+---
+# accepts authentication requests from openvpn plugin
+web_server:
+  listen_address: 0.0.0.0
+  port: 11245
+  # the same value must be in openvpn plugin config file
+  # used to authenticate openvpn plugin
+  auth_api_key: 123456789
+  https:
+    enable: false
+    # full path to files
+    private_key: ""
+    certificate: ""
+  # authentication service can be monitored by periodicaly pulling status
+  status:
+    # enables status url for monitoring
+    enable: true
+    # choose any valid url path
+    path: /status/121233456
+    # used for accessing the service status url
+    api_key: 987654321
+log:
+  file: /tmp/auth-service.log
+  # available log levels are debug, info, warn, error
+  level: error
+auth_provider:
+  # radius or ldap
+  type: radius
+  # monitoring of authentication servers
+  # service can periodically try to authenticate chosen user on all available authentication servers.
+  # if any of servers didn't authenticate user, than this server is concidered unavailable
+  # and is not used for authentication until next authentication check
+  auth_check:
+    #enable monitoring of authentication servers
+    enable: true
+    # interval between authentication checks
+    interval_sec: 5
+    # user for authentication tests. This user must have minimal privileges.
+    #in case  auth_provider type = radius use login. Example: "user:  user1-login"
+    #if auth_provider type = ldap, use ldap dn. Example: "cn=user1,ou=Corp Users,dc=acme,dc=com"
+    user: user2
+    pass: User-1234
+  # if auth_provider type is ldap, this section is ignored
+  radius:
+    # can be any string. Depends on your radius server policy
+    nas_id: "openVPN"
+    # can be blank. Depends on your radius server policy
+    nas_ipv4_address: ""
+    # Depends on your radius server policy. Default value is 443
+    nas_port: 443
+    servers:
+      - name: server1
+        address: 192.168.0.201
+        port: 1812
+        # available protocols are pap, mschapv2
+        protocol: mschapv2
+        secret: secret
+        # must be not less then response timeout for MFA provider
+        response_timeout_sec: 15
+      - name: server2
+        address: 192.168.0.122
+        port: 1812
+        # available protocols are pap, mschapv2
+        protocol: mschapv2
+        secret: secret
+        # must be not less then response timeout for MFA provider
+        response_timeout_sec: 15
+      - name: server3
+        address: 192.168.0.121
+        port: 1812
+        # available protocols are pap, mschapv2
+        protocol: mschapv2
+        secret: secret
+        # must be not less then response timeout for MFA provider
+        response_timeout_sec: 15
+  # if auth_provider type is radius, this section is ignored
+  ldap:
+    bind_dn: "cn=svc bind user,ou=CORP,dc=acme,dc=test"
+    pass: "SvcAcc$123458"
+    search_base: "ou=CORP,dc=acme,dc=test"
+    search_filter: "(&(sAMAccountName=%s)(objectCategory=Person))"
+    verify_cert: false
+    servers:
+      - name: server1
+        address: 192.168.0.201
+        port: 389
+        ssl: false
+        # must be not less then response timeout for MFA provider
+        response_timeout_sec: 15

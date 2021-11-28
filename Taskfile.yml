@@ -1,0 +1,38 @@
+version: 3
+
+tasks:
+  build-all:
+    cmds:
+      - task: clear
+      - mkdir dist
+      - task: build-service
+      - task: build-plugin
+      - task: build-rclient
+      - echo "Build done"
+
+  build-service:
+    dir: auth-service
+    cmds:
+      - go build -o auth-service  ./cmd/auth-service/main.go
+      - mkdir ../dist/auth-service
+      - cp auth-service ../dist/auth-service/auth-service
+      - cp config/config.yml ../dist/auth-service/config.yml
+
+  build-plugin:
+    dir: openvpn-plugin/
+    cmds:
+      - cargo build --release
+      - mkdir ../dist/openvpn-plugin
+      - cp target/release/libopenvpn_auth_plugin.so  ../dist/openvpn-plugin/libopenvpn_auth_plugin.so
+      - cp config/config.yml ../dist/openvpn-plugin/config.yml
+
+  build-rclient:
+    dir: radius-client/
+    cmds:
+      - go build -o radius-client
+      - mkdir ../dist/radius-client
+      - mv radius-client ../dist/radius-client/radius-client
+
+  clear:
+    cmds:
+      - rm -rf dist
