@@ -88,7 +88,7 @@ curl -H "X-Api-Key: 123456789" -X POST --data '{"u": "user", "p": "user_password
 
 where: 
 
-- `X-Api-Key` is equal to `auth_api_key" from `dist/auth-service/config.yml`
+- `X-Api-Key` is equal to `auth_api_key` from `dist/auth-service/config.yml`
 - `ip` and `port` in url must be equal to `web_server` variables in `dist/auth-service/config.yml`
 
 ## Fault tolerance authentication
