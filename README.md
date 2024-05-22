@@ -38,6 +38,12 @@ The plugin consists of the OpenVPN plugin and authentication service. There are 
 
 ## Installation
 
+### Binary
+
+Linux only build available in "Releases".
+
+### From source
+
 1. Install rust, golang from official repositories or websites.
 2. Install Task from https://taskfile.dev/
 3. Run
