@@ -48,4 +48,3 @@ jobs:
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: ${{ github.workspace }}/openvpn-multi-authentication-plugin-linux-amd64.tar.gz
-        draft: true
