@@ -42,7 +42,6 @@ jobs:
     - name: "make archive"
       run: |
         tar -czf openvpn-multi-authentication-plugin-linux-amd64.tar.gz -C dist .
-    - run: ls -la
     - name: "upload release"
       uses: svenstaro/upload-release-action@v2
       with:
