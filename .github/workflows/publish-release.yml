@@ -1,0 +1,51 @@
+name: 'publish-release'
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v4
+    - name: "install Rust stable"
+      uses: dtolnay/rust-toolchain@stable
+    - name: "install go"
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.22'
+    - run: go version
+    - name: "create dist dir"
+      run: |
+        mkdir -p dist/auth-service
+        mkdir -p dist/openvpn-plugin
+        mkdir -p dist/radius-client
+    - name: "build auth-service"
+      run: |
+        cd auth-service
+        go build -o auth-service  ./cmd/auth-service/main.go
+        cp auth-service ../dist/auth-service/auth-service
+        cp config/config.yml ../dist/auth-service/config.yml
+    - name: "build openvpn-plugin"
+      run: |
+        cd openvpn-plugin
+        cargo build --release
+        cp target/release/libopenvpn_auth_plugin.so  ../dist/openvpn-plugin/libopenvpn_auth_plugin.so
+        cp config/config.yml ../dist/openvpn-plugin/config.yml
+    - name: "build radius-client"
+      run: |
+        cd radius-client
+        go build -o radius-client
+        mv radius-client ../dist/radius-client/radius-client
+    - name: "make archive"
+      run: |
+        tar -czf openvpn-multi-authentication-plugin-linux-amd64.tar.gz -C dist .
+    - run: ls -la
+    - name: "upload release"
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: ${{ github.workspace }}/openvpn-multi-authentication-plugin-linux-amd64.tar.gz
+        draft: true
